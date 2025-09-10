@@ -1,0 +1,12 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "amigo-blond.vercel",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "amigo-blond.vercel",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "description": "play by amigoz #1"
+}
