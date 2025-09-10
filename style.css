@@ -11,16 +11,16 @@ body {
 
 button {
   padding: 20px 40px;
-  font-size: 22px;
+  font-size: 12px;
   background: #ff6600;
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
   color: #000;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.1s;
 }
 
 button:active {
-  transform: scale(1.1);
+  transform: scale(0.9);
   background: #ff9933;
 }
