@@ -59,11 +59,11 @@ button:active {
 }
 
 html, body {
-  overflow: hidden; /* запрет прокрутки */
-  touch-action: none; /* запрещаем некоторые жесты */
-  -ms-touch-action: none; /* для старых браузеров */
+  overflow: hidden;        /* запрет прокрутки */
+  touch-action: none;      /* запрещаем свайпы и двойные тапы */
+  -ms-touch-action: none;  /* для старых браузеров */
   margin: 0;
   padding: 0;
-  height: 100%;
   width: 100%;
+  height: 100%;
 }
