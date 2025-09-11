@@ -88,3 +88,58 @@ html, body {
   align-items: center;
   justify-content: flex-start;
 }
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #000000, #ff6600);
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #ffcc66;
+  font-weight: bold;
+  cursor: pointer;
+}
+button:active {
+  transform: scale(0.95);
+}
+
+#player {
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+#player input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
+
+#leaderboard {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 20px;
+  max-width: 300px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+#leaderboard h3 {
+  margin: 0 0 10px;
+  color: #ffcc66;
+}
+#leaderboard ol {
+  padding-left: 20px;
+  text-align: left;
+}
