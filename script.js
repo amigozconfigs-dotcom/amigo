@@ -30,3 +30,41 @@ db.ref("players").on("value", snapshot => {
     }
   }
 });
+
+// === Блокируем скролл, свайпы и масштабирование ===
+document.addEventListener('touchstart', function(e) {
+  e.preventDefault();
+}, { passive: false });
+
+document.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+}, { passive: false });
+
+document.addEventListener('touchend', function(e) {
+  e.preventDefault();
+}, { passive: false });
+
+// Для мыши (если кто-то тестит на ПК)
+document.addEventListener('mousedown', function(e) {
+  e.preventDefault();
+}, { passive: false });
+
+document.addEventListener('mousemove', function(e) {
+  e.preventDefault();
+}, { passive: false });
+
+// === Метатег для отключения масштабирования ===
+if (!document.querySelector('meta[name="viewport"]')) {
+  const meta = document.createElement('meta');
+  meta.name = "viewport";
+  meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+  document.head.appendChild(meta);
+}
+
+// === CSS через JS, чтобы убедиться что прокрутки нет ===
+document.documentElement.style.overflow = 'hidden';
+document.body.style.overflow = 'hidden';
+document.documentElement.style.touchAction = 'none';
+document.body.style.touchAction = 'none';
+document.body.style.userSelect = 'none';
+document.body.style.webkitUserSelect = 'none';
