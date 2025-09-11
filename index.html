@@ -1,2 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тапалка с заданиями</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      display: flex;
+      justify-content: center;   
+      align-items: center;       
+      background: linear-gradient(180deg, #000000, #b3540d);
+      font-family: Arial, sans-serif;
+      color: #ffca70;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #scoreDisplay {
+      font-size: 20px;
+      margin: 10px 0 20px;
+    }
+    button {
+      padding: 15px 40px;
+      font-size: 22px;
+      font-weight: bold;
+      border: none;
+      border-radius: 15px;
+      background: orange;
+      color: black;
+      cursor: pointer;
+      transition: transform 0.1s ease-in-out, box-shadow 0.2s;
+    }
+    button:active {
+      transform: scale(0.95);
+      box-shadow: 0 0 15px #ffae42;
+    }
+    .tasks {
+      margin-top: 25px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 15px;
+      width: 280px;
+      text-align: left;
+    }
+    .tasks h2 {
+      margin-top: 0;
+    }
+    .tasks ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .tasks li {
+      margin: 10px 0;
+    }
+    .done {
+      text-decoration: line-through;
+      color: #7CFC00;
+    }
+    .progress {
+      font-size: 12px;
+      color: #ccc;
+    }
+    .leaderboard {
+      margin-top: 25px;
+      padding: 20px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 15px;
+      width: 280px;
+    }
+    .leaderboard h2 {
+      margin-top: 0;
+    }
+    .leaderboard ol {
+      padding-left: 20px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Тапай по кнопке!</h1>
+    <p id="scoreDisplay">Очки: 0 — x1</p>
+    <button id="tapBtn">ТАП</button>
 
+    <div class="tasks">
+      <h2>Задания</h2>
+      <ul id="tasksList"></ul>
+    </div>
 
+    <div class="leaderboard">
+      <h2>🏆 Лидеры</h2>
+      <ol id="leaderList"></ol>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <script>
+    // 🔑 Сюда вставь свой Firebase config:
+    const firebaseConfig = {
+      apiKey: "ТВОЙ_API_KEY",
+      authDomain: "ТВОЙ_ПРОЕКТ.firebaseapp.com",
+      databaseURL: "https://ТВОЙ_ПРОЕКТ.firebaseio.com",
+      projectId: "ТВОЙ_ПРОЕКТ",
+      storageBucket: "ТВОЙ_ПРОЕКТ.appspot.com",
+      messagingSenderId: "ID",
+      appId: "ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Ник игрока (спросим 1 раз и сохраним)
+    let playerName = localStorage.getItem("playerName");
+    if (!playerName) {
+      playerName = prompt("Введите ваш ник:");
+      if (!playerName) playerName = "Игрок_" + Math.floor(Math.random()*1000);
+      localStorage.setItem("playerName", playerName);
+    }
+
+    let score = parseInt(localStorage.getItem("score")) || 0;
+    let multiplier = parseInt(localStorage.getItem("multiplier")) || 1;
+
+    // Список заданий
+    let tasks = [
+      { id: 1, text: "Набери 100 очков", target: 100, condition: () => score >= 100, reward: () => { multiplier++; alert("Награда: множитель +1!"); } },
+      { id: 2, text: "Достигни множителя x2", target: 2, condition: () => multiplier >= 2, reward: () => { score += 200; alert("Награда: 200 очков!"); } },
+      { id: 3, text: "Сделай 1000 очков", target: 1000, condition: () => score >= 1000, reward: () => { multiplier += 2; alert("Награда: множитель +2!"); } },
+      { id: 4, text: "Сделай 10.000 очков", target: 10000, condition: () => score >= 10000, reward: () => { score += 5000; alert("Награда: 5000 очков!"); } }
+    ];
+
+    let completedTasks = JSON.parse(localStorage.getItem("completedTasks")) || [];
+
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const tapBtn = document.getElementById("tapBtn");
+    const tasksList = document.getElementById("tasksList");
+    const leaderList = document.getElementById("leaderList");
+
+    function saveProgress() {
+      localStorage.setItem("score", score);
+      localStorage.setItem("multiplier", multiplier);
+      localStorage.setItem("completedTasks", JSON.stringify(completedTasks));
+
+      // Сохраняем очки в Firebase
+      db.ref("players/" + playerName).set({
+        name: playerName,
+        score: score
+      });
+    }
+
+    function updateDisplay() {
+      scoreDisplay.textContent = `Очки: ${score} — x${multiplier}`;
+      saveProgress();
+
+      tasksList.innerHTML = "";
+      tasks.forEach(task => {
+        let li = document.createElement("li");
+
+        let mainText = document.createElement("div");
+        mainText.textContent = task.text;
+        if (completedTasks.includes(task.id)) {
+          mainText.classList.add("done");
+        }
+
+        let progress = document.createElement("div");
+        progress.classList.add("progress");
+
+        if (task.id === 2) {
+          progress.textContent = `x${multiplier} / x${task.target}`;
+        } else {
+          progress.textContent = `${score} / ${task.target}`;
+        }
+
+        li.appendChild(mainText);
+        li.appendChild(progress);
+        tasksList.appendChild(li);
+      });
+    }
+
+    function checkTasks() {
+      tasks.forEach(task => {
+        if (!completedTasks.includes(task.id) && task.condition()) {
+          task.reward();
+          completedTasks.push(task.id);
+        }
+      });
+    }
+
+    tapBtn.addEventListener("click", () => {
+      score += 1 * multiplier;
+      checkTasks();
+      updateDisplay();
+    });
+
+    // Автосохранение каждые 2 секунды
+    setInterval(saveProgress, 2000);
+
+    // Загрузка лидерборда
+    db.ref("players").on("value", snapshot => {
+      let data = snapshot.val() || {};
+      let arr = Object.values(data);
+      arr.sort((a,b) => b.score - a.score); // сортируем по очкам
+      leaderList.innerHTML = "";
+      arr.slice(0, 10).forEach(p => {
+        let li = document.createElement("li");
+        li.textContent = `${p.name}: ${p.score}`;
+        leaderList.appendChild(li);
+      });
+    });
+
+    // Первичная загрузка
+    updateDisplay();
+  </script>
+</body>
+</html>

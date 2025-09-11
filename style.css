@@ -1,34 +1,67 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background: linear-gradient(135deg, #000, #ff6600);
-  color: #fff;
-  height: 70vh;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: center;   /* центр по горизонтали */
+  align-items: center;       /* центр по вертикали */
+  background: linear-gradient(180deg, #000000, #b3540d);
+  font-family: Arial, sans-serif;
+  color: #ffca70;
 }
 
+/* Контейнер игры */
+.container {
+  text-align: center;
+}
+
+/* Кнопка */
 button {
-  padding: 20px 40px;
-  font-size: 12px;
-  background: #ff6600;
+  padding: 15px 40px;
+  font-size: 22px;
+  font-weight: bold;
   border: none;
-  border-radius: 12px;
-  color: #000;
+  border-radius: 15px;
+  background: orange;
+  color: black;
   cursor: pointer;
-  transition: 0.1s;
+  transition: transform 0.1s ease-in-out, box-shadow 0.2s;
+}
+button:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 15px #ffae42;
 }
 
-button:active {
-  transform: scale(0.7);
-  background: #ff9933;
+/* Задания */
+.tasks {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 15px;
+  width: 280px;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+}
+.tasks ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.tasks li {
+  margin: 8px 0;
+}
+.done {
+  text-decoration: line-through;
+  color: #7CFC00;
 }
 
 html, body {
-  overflow: hidden;
-  touch-action: none; 
-  -ms-touch-action: none; 
+  overflow: hidden; /* запрет прокрутки */
+  touch-action: none; /* запрещаем некоторые жесты */
+  -ms-touch-action: none; /* для старых браузеров */
   margin: 0;
   padding: 0;
   height: 100%;
